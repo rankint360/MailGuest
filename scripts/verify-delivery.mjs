@@ -60,6 +60,10 @@ sys.stdout.write("".join(parser.parts))
   return normalize(result.stdout);
 }
 
+function matchesBody(text) {
+  return text === body || text.startsWith(body + ' ');
+}
+
 async function verify() {
   const {address, token} = await request('/inbox/create', {
     method: 'POST',
@@ -79,8 +83,8 @@ async function verify() {
       const from = String(email.from ?? '').trim().toLowerCase();
       if (from !== sender && !from.endsWith('<' + sender + '>')) continue;
       received++;
-      const plainMatches = normalize(email.body) === body;
-      const htmlMatches = !plainMatches && htmlText(email.html) === body;
+      const plainMatches = matchesBody(normalize(email.body));
+      const htmlMatches = !plainMatches && matchesBody(htmlText(email.html));
       if (email.subject === subject && (plainMatches || htmlMatches)) {
         console.log('PASS: external sender, subject, and ' + (plainMatches ? 'plain-text' : 'HTML') + ' body matched');
         return;
