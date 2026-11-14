@@ -14,3 +14,7 @@ Last updated November 14, 2026.
 Serve `dist` over HTTP to run locally. The browser needs access to the Guerrilla Mail API.
 
 See [the record register](RECORD_REGISTER.md) and [the design system](DESIGN_SYSTEM.md).
+
+## Replacement provider evaluation
+
+Guerrilla Mail returned an empty subject and an empty HTML preformatted block for both test messages. TempMail.lol created a test inbox and returned a valid inbox response. Run `node scripts/verify-delivery.mjs sender@example.com` to check independent delivery against the expected sender, subject, and plain-text body. A production integration needs a server endpoint because the provider's browser CORS policy allows its own site.
