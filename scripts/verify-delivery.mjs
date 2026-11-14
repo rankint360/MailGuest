@@ -1,3 +1,4 @@
+import {spawnSync} from 'node:child_process';
 import assert from 'node:assert/strict';
 
 const api = 'https://api.tempmail.lol/v2';
@@ -19,6 +20,46 @@ async function request(path, options = {}) {
   return response.json();
 }
 
+function normalize(value) {
+  return typeof value === 'string' ? value.replace(/\s+/g, ' ').trim() : '';
+}
+
+function htmlText(html) {
+  if (!normalize(html)) return '';
+  const parser = `
+import sys
+from html.parser import HTMLParser
+
+class MessageText(HTMLParser):
+    hidden = 0
+    parts = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in ("script", "style", "head", "template"):
+            self.hidden += 1
+        elif not self.hidden and tag in ("br", "p", "div", "li", "tr"):
+            self.parts.append(" ")
+
+    def handle_endtag(self, tag):
+        if tag in ("script", "style", "head", "template") and self.hidden:
+            self.hidden -= 1
+        elif not self.hidden and tag in ("p", "div", "li", "tr"):
+            self.parts.append(" ")
+
+    def handle_data(self, data):
+        if not self.hidden:
+            self.parts.append(data)
+
+parser = MessageText()
+parser.feed(sys.stdin.read())
+parser.close()
+sys.stdout.write("".join(parser.parts))
+`;
+  const result = spawnSync('python', ['-X', 'utf8', '-c', parser], {input: html, encoding: 'utf8'});
+  if (result.error || result.status !== 0) throw new Error('HTML verification requires Python 3 on PATH');
+  return normalize(result.stdout);
+}
+
 async function verify() {
   const {address, token} = await request('/inbox/create', {
     method: 'POST',
@@ -26,7 +67,7 @@ async function verify() {
     body: '{}'
   });
   assert.ok(address && token, 'The provider did not return an inbox');
-  console.log('Send a plain-text email to ' + address);
+  console.log('Send an email to ' + address);
   console.log('Subject: ' + subject);
   console.log('Body: ' + body);
   const deadline = Date.now() + 5 * 60 * 1000;
@@ -38,13 +79,15 @@ async function verify() {
       const from = String(email.from ?? '').trim().toLowerCase();
       if (from !== sender && !from.endsWith('<' + sender + '>')) continue;
       received++;
-      if (email.subject === subject && email.body?.trim() === body) {
-        console.log('PASS: external sender, subject, and plain-text body matched');
+      const plainMatches = normalize(email.body) === body;
+      const htmlMatches = !plainMatches && htmlText(email.html) === body;
+      if (email.subject === subject && (plainMatches || htmlMatches)) {
+        console.log('PASS: external sender, subject, and ' + (plainMatches ? 'plain-text' : 'HTML') + ' body matched');
         return;
       }
       console.log('Payload fields: plain-text=' + (typeof email.body === 'string' && email.body.trim().length > 0) + ', HTML=' + (typeof email.html === 'string' && email.html.trim().length > 0));
       console.log('Sender matched. Subject matched: ' + (email.subject === subject) +
-        '. Body matched: ' + (email.body?.trim() === body) + '.');
+        '. Body matched: ' + (plainMatches || htmlMatches) + '.');
     }
     await new Promise(resolve => setTimeout(resolve, 15000));
   }
