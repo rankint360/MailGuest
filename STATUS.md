@@ -22,3 +22,5 @@ Guerrilla Mail returned an empty subject and an empty HTML preformatted block fo
 The live TempMail.lol test matched the external sender and subject. The plain-text body did not match the expected value. Full content verification remains pending.
 
 The delivery check now accepts matching text from either the plain-text or HTML body. HTML checks require Python 3 on PATH. A new independent message is needed because the provider consumes messages on fetch.
+
+The follow-up Gmail test matched the sender and subject. Both plain-text and HTML bodies were present, but neither normalized to the expected test sentence. A comparison with the actual text in Gmail Sent is pending before switching providers.
