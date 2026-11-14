@@ -20,3 +20,4 @@ Add a dated entry for each change to the application, documentation, deployment,
 | 2026-11-14 | Delivery verification | Added HTML body extraction and matching to the replacement provider test. Verified formatted text, entity decoding, and empty body handling locally. |
 | 2026-11-14 | Replacement provider retest | Gmail delivery matched sender and subject. Both body formats were present and neither matched the expected test sentence. |
 | 2026-11-14 | Replacement delivery test | An independent Gmail message matched the expected sender, subject, and body in both plain text and HTML. |
+| 2026-11-14 | Hosted provider test | Fixed Worker redirect handling. TempMail.lol returned HTTP 403 from the hosted deployment. Restored Guerrilla Mail and verified address creation. |
