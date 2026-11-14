@@ -28,12 +28,19 @@ export default {
     } else {
       return new Response(null, {status: 404});
     }
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
     try {
-      const response = await fetch(upstream + endpoint, {...options, redirect: 'error', signal: AbortSignal.timeout(10000)});
+      const response = await fetch(upstream + endpoint, {...options, redirect: 'manual', signal: controller.signal});
+      if (!response.ok) console.warn("Mail provider HTTP status", path, response.status);
       if (!response.ok) return new Response(null, {status: response.status === 429 ? 429 : 502, headers: noStore});
       return Response.json(await response.json(), {headers: noStore});
-    } catch {
+    } catch (error) {
+      console.error('Mail provider request failed', path, error.name);
       return new Response(null, {status: 502, headers: noStore});
+    } finally {
+      clearTimeout(timeout);
     }
   }
 };
+
