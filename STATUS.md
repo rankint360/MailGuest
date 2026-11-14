@@ -26,3 +26,5 @@ The delivery check now accepts matching text from either the plain-text or HTML 
 The follow-up Gmail test matched the sender and subject. Both plain-text and HTML bodies were present, but neither normalized to the expected test sentence. A comparison with the actual text in Gmail Sent is pending before switching providers.
 
 The signature-free Gmail test passed against TempMail.lol. Sender, subject, and body matched in both plain text and HTML. The next step is to integrate the provider into MailGuest and verify delivery through the deployed inbox.
+
+The private Worker rejected Fetch's `redirect: 'error'` setting. With supported manual redirect handling, the request reached TempMail.lol and returned HTTP 403. The reason for the provider rejection is unverified. Restored Guerrilla Mail and confirmed address creation in the browser.
