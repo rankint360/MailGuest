@@ -17,3 +17,4 @@ Add a dated entry for each change to the application, documentation, deployment,
 | 2026-11-14 | Delivery investigation | The sender confirmed both Gmail tests included a subject and body. Direct Guerrilla Mail API checks returned empty subject and excerpt fields for both messages. MailGuest displayed no body text. Public launch remains pending resolution and a successful external test. |
 | 2026-11-14 | Provider evaluation | Confirmed both Guerrilla Mail message bodies contained only an empty preformatted block. Added a repeatable TempMail.lol test that verifies sender, subject, and body before a provider migration. |
 | 2026-11-14 | Replacement delivery test | TempMail.lol preserved the external sender and subject. The plain-text body did not match the expected test value. |
+| 2026-11-14 | Delivery verification | Added HTML body extraction and matching to the replacement provider test. Verified formatted text, entity decoding, and empty body handling locally. |
