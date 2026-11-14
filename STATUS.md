@@ -24,3 +24,5 @@ The live TempMail.lol test matched the external sender and subject. The plain-te
 The delivery check now accepts matching text from either the plain-text or HTML body. HTML checks require Python 3 on PATH. A new independent message is needed because the provider consumes messages on fetch.
 
 The follow-up Gmail test matched the sender and subject. Both plain-text and HTML bodies were present, but neither normalized to the expected test sentence. A comparison with the actual text in Gmail Sent is pending before switching providers.
+
+The signature-free Gmail test passed against TempMail.lol. Sender, subject, and body matched in both plain text and HTML. The next step is to integrate the provider into MailGuest and verify delivery through the deployed inbox.
