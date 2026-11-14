@@ -1,0 +1,23 @@
+:root {
+  --mg-brand: #5141d9;
+  --mg-brand-hover: #3f30b4;
+  --mg-ink: #201b39;
+  --mg-muted: #615b73;
+  --mg-canvas: #f7f6ff;
+  --mg-surface: #ffffff;
+  --mg-border: #ddd9ee;
+  --mg-accent: #d7f987;
+  --mg-danger: #a2243d;
+  --mg-font: "DM Sans", system-ui, sans-serif;
+  --mg-mono: "Space Mono", ui-monospace, monospace;
+  --mg-radius-control: 10px;
+  --mg-radius-card: 20px;
+  --mg-space-1: 4px;
+  --mg-space-2: 8px;
+  --mg-space-3: 12px;
+  --mg-space-4: 16px;
+  --mg-space-6: 24px;
+  --mg-space-8: 32px;
+  --mg-space-12: 48px;
+}
+.mg-focus:focus-visible { outline: 3px solid var(--mg-brand); outline-offset: 3px; }

@@ -2,16 +2,15 @@
 
 Last updated November 14, 2026.
 
-| Area | State |
+| Area | Current state |
 | --- | --- |
-| Application | Relaybox generates disposable addresses and supports copying, refreshing, reading incoming mail, and switching or removing the active address. |
-| Deployment | The initial Sites deployment succeeded with owner-only access. |
-| Provider | Guerrilla Mail supplies inbound mail and temporary addresses. Removing an address clears the current browser session. |
-| Verification | JavaScript syntax and the provider operations for creating an address, listing mail, reading a welcome message, and creating a different address were checked. |
-| Pending verification | Send a message from an independent mailbox and confirm it appears and opens in the deployed inbox. |
+| Product | MailGuest, a receive-only disposable inbox powered by Guerrilla Mail. |
+| Website | Nine-section branded homepage with mailbox, timer, motion graphics, FAQ, and footer links to Privacy Policy, Terms of Use and Support. |
+| Deployment | [Owner-private Sites release](https://relaybox-kdvumb.stonybrioche1.chatgpt.site/). The planned domain is mailguest.com. Domain connection is pending. |
+| Browser verification | Checked desktop and mobile layouts, copying, replacement, removal, and the three footer pages. |
+| Recovery verification | Simulated expiration, provider outage, failed initial address generation, and successful retry. |
+| Public launch | Pending independent sender delivery via auto-refresh and verification of sender, subject and body. |
 
-## Run locally
+Serve `dist` over HTTP to run locally. The browser needs access to the Guerrilla Mail API.
 
-Serve the `dist` directory with a static HTTP server and open its loopback URL in a browser. The application uses the Guerrilla Mail API directly and needs an internet connection.
-
-See the [Record Register](RECORD_REGISTER.md) for the project history.
+See [the record register](RECORD_REGISTER.md) and [the design system](DESIGN_SYSTEM.md).

@@ -3,7 +3,7 @@ const buttons = ['copy', 'new', 'delete', 'refresh'].map(byId);
 const key = 'relaybox-mailbox-v2';
 let mailbox;
 let changing = false;
-let refreshing = false;
+let refreshing;
 
 async function api(operation, params = {}) {
   const query = new URLSearchParams({f: operation, ...params, t: Date.now()});
@@ -23,6 +23,8 @@ function plainText(html) {
 function status(message) { byId('status').textContent = message; }
 function display() {
   byId('address').value = mailbox?.address || '';
+  byId('address').placeholder = changing ? 'Preparing your address…' : 'No active address';
+  updateTimer();
   buttons.forEach(button => button.disabled = changing || (button.id !== 'new' && !mailbox));
 }
 function save(value) {
@@ -64,7 +66,7 @@ async function change(create) {
     empty(next ? 'Your inbox is empty' : 'No active address', next ? 'Waiting for incoming mail.' : 'Create an address to receive messages.');
     status(next ? 'Address ready' : 'Address removed');
   } catch {
-    status(create ? 'Could not create an address. Try again.' : 'Could not delete this address. Try again.');
+    status(create ? 'Could not create an address. Try again.' : 'Could not remove this address. Try again.');
     if (!mailbox) {
       byId('address').placeholder = 'No active address';
       empty('No active address', 'Use New address to try again.');
@@ -95,9 +97,9 @@ async function readMessage(account, id) {
   }
 }
 async function refresh(manual = false) {
-  if (!mailbox || changing || refreshing) return;
+  if (!mailbox || changing || refreshing === mailbox) return;
   const account = mailbox;
-  refreshing = true;
+  refreshing = account;
   if (manual) status('Checking mail…');
   try {
     if (Date.now() >= account.expires) throw Object.assign(new Error('Address expired'), {expired: true});
@@ -109,12 +111,14 @@ async function refresh(manual = false) {
       save(account);
     }
     const messages = result.list;
+    const focused = document.activeElement?.dataset.messageId;
     if (!messages.length) empty('Your inbox is empty', 'Waiting for incoming mail.');
     else {
       byId('count').textContent = result.count ?? messages.length;
       byId('messages').replaceChildren(...messages.map(message => {
         const row = document.createElement('button');
         row.className = 'message';
+        row.dataset.messageId = message.mail_id;
         const summary = document.createElement('span');
         summary.textContent = (message.mail_from || 'Unknown sender') + ' · ' + (plainText(message.mail_subject || '') || '(No subject)');
         const received = document.createElement('time');
@@ -125,16 +129,26 @@ async function refresh(manual = false) {
         row.onclick = () => readMessage(account, message.mail_id);
         return row;
       }));
+      if (focused) [...byId('messages').children].find(row => row.dataset.messageId === focused)?.focus({preventScroll: true});
     }
     if (manual || byId('status').textContent.startsWith('Inbox unavailable')) status('Inbox up to date');
   } catch (error) {
     if (mailbox !== account || changing) return;
     if (error.expired) {
+      if (byId('reader').open) byId('reader').close();
       save(undefined);
       empty('Address expired', 'Create a new address to receive mail.');
+      status('Address expired');
+      return;
     }
     status('Inbox unavailable. Try refreshing or creating a new address.');
-  } finally { refreshing = false; }
+  } finally { if (refreshing === account) refreshing = undefined; }
+}
+
+function updateTimer() {
+  const seconds = mailbox ? Math.max(0, Math.ceil((mailbox.expires - Date.now()) / 1000)) : 0;
+  const value = Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
+  byId('timer').textContent = mailbox ? value + ' left' : '';
 }
 
 byId('copy').onclick = async () => {
@@ -142,7 +156,7 @@ byId('copy').onclick = async () => {
   catch { byId('address').select(); status('Address selected. Press Ctrl+C or ⌘C to copy.'); }
 };
 byId('new').onclick = () => { if (!mailbox || confirm('Switch to a new address?')) change(true); };
-byId('delete').onclick = () => { if (confirm('Remove this address from Relaybox?')) change(false); };
+byId('delete').onclick = () => { if (confirm('Remove this address from MailGuest?')) change(false); };
 byId('refresh').onclick = () => refresh(true);
 byId('close').onclick = () => byId('reader').close();
 
@@ -155,4 +169,11 @@ if (mailbox) {
   empty('Preparing your inbox', 'Creating a temporary email address.');
   change(true);
 }
+setInterval(() => {
+  updateTimer();
+  if (mailbox && Date.now() >= mailbox.expires) refresh();
+}, 1000);
 setInterval(() => { if (!document.hidden) refresh(); }, 15000);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) refresh();
+});
