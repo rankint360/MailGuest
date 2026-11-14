@@ -13,4 +13,4 @@ Add a dated entry for each change to the application, documentation, deployment,
 | 2026-11-14 | Branding and site | Rebranded Relaybox as MailGuest, added the brand tokens, logos, site icons and social assets, and rebuilt the homepage as nine sections with motion that respects reduced-motion preferences. |
 | 2026-11-14 | Launch pages | Published Privacy Policy, Terms of Use and Support, linked from the footer. |
 | 2026-11-14 | Verification | Confirmed the private release, desktop and mobile layouts, address copying, replacement and removal, and launch-page links. Exercised expiry and provider recovery in a simulated harness. |
-| 2026-11-14 | Deployment | Deployed the MailGuest release privately through Sites. Independent sender delivery remains pending. |
+| 2026-11-14 | Deployment | Deployed the MailGuest release privately through Sites. An independent Gmail message arrived via auto-refresh. The reader displayed the Gmail sender and empty subject and body. A populated external message is still needed to finish launch verification. |
