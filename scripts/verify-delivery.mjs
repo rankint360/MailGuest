@@ -42,6 +42,7 @@ async function verify() {
         console.log('PASS: external sender, subject, and plain-text body matched');
         return;
       }
+      console.log('Payload fields: plain-text=' + (typeof email.body === 'string' && email.body.trim().length > 0) + ', HTML=' + (typeof email.html === 'string' && email.html.trim().length > 0));
       console.log('Sender matched. Subject matched: ' + (email.subject === subject) +
         '. Body matched: ' + (email.body?.trim() === body) + '.');
     }
