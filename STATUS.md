@@ -26,3 +26,6 @@ The delivery check now accepts matching text from either the plain-text or HTML 
 The follow-up Gmail test matched the sender and subject. Both plain-text and HTML bodies were present, but neither normalized to the expected test sentence. A comparison with the actual text in Gmail Sent is pending before switching providers.
 
 The signature-free Gmail test passed against TempMail.lol. Sender, subject, and body matched in both plain text and HTML. The next step is to integrate the provider into MailGuest and verify delivery through the deployed inbox.
+
+
+The TempMail.lol integration built and passed live provider calls locally. The private Sites Worker returned HTTP 502 on address creation. The previous Guerrilla Mail release was restored and verified. The new provider awaits a working hosted connection and deployed delivery test.

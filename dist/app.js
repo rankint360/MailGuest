@@ -1,14 +1,16 @@
 const byId = id => document.getElementById(id);
 const buttons = ['copy', 'new', 'delete', 'refresh'].map(byId);
-const key = 'relaybox-mailbox-v2';
+const key = 'mailguest-mailbox-v3';
 let mailbox;
 let changing = false;
 let refreshing;
 
-async function api(operation, params = {}) {
-  const query = new URLSearchParams({f: operation, ...params, t: Date.now()});
-  const response = await fetch('https://api.guerrillamail.com/ajax.php?' + query, {
-    credentials: 'omit', cache: 'no-store', signal: AbortSignal.timeout(12000)
+async function api(operation, token) {
+  const response = await fetch('/api/' + operation, {
+    method: 'POST',
+    headers: token ? {'X-Mailbox-Token': token} : {},
+    cache: 'no-store',
+    signal: AbortSignal.timeout(12000)
   });
   if (!response.ok) throw new Error('Mail request failed');
   return response.json();
@@ -17,6 +19,8 @@ async function api(operation, params = {}) {
 function plainText(html) {
   const template = document.createElement('template');
   template.innerHTML = html;
+  template.content.querySelectorAll('script,style,head,template').forEach(node => node.remove());
+  template.content.querySelectorAll('br,p,div,li,tr,td').forEach(node => node.after('\n'));
   return template.content.textContent.trim();
 }
 
@@ -57,9 +61,9 @@ async function change(create) {
   let next;
   try {
     if (create) {
-      const account = await api('get_email_address');
-      if (!account.email_addr || !account.sid_token) throw new Error('No address available');
-      next = {address: account.email_addr, token: account.sid_token, expires: account.email_timestamp * 1000 + 3600000};
+      const account = await api('address');
+      if (!account.address || !account.token) throw new Error('No address available');
+      next = {address: account.address, token: account.token, expires: Date.now() + 3600000, messages: []};
     }
     if (byId('reader').open) byId('reader').close();
     save(next);
@@ -77,24 +81,11 @@ async function change(create) {
     if (next && mailbox === next) refresh();
   }
 }
-let activeRead = 0;
-async function readMessage(account, id) {
-  const dialog = byId('reader');
-  byId('subject').textContent = 'Loading message…';
-  byId('sender').textContent = '';
-  byId('body').textContent = '';
-  const request = ++activeRead;
-  dialog.showModal();
-  try {
-    const message = await api('fetch_email', {sid_token: account.token, email_id: id});
-    if (mailbox !== account || !dialog.open || request !== activeRead) return;
-    if (!message.mail_id) throw new Error('Message unavailable');
-    byId('subject').textContent = plainText(message.mail_subject || '') || '(No subject)';
-    byId('sender').textContent = message.mail_from || '';
-    byId('body').textContent = plainText(message.mail_body || '') || '(Empty message)';
-  } catch {
-    if (dialog.open && request === activeRead) byId('subject').textContent = 'Could not load this message';
-  }
+function readMessage(message) {
+  byId('subject').textContent = message.subject || '(No subject)';
+  byId('sender').textContent = message.from || '';
+  byId('body').textContent = message.body?.trim() || plainText(message.html || '') || '(Empty message)';
+  byId('reader').showModal();
 }
 async function refresh(manual = false) {
   if (!mailbox || changing || refreshing === mailbox) return;
@@ -103,30 +94,32 @@ async function refresh(manual = false) {
   if (manual) status('Checking mail…');
   try {
     if (Date.now() >= account.expires) throw Object.assign(new Error('Address expired'), {expired: true});
-    const result = await api('get_email_list', {sid_token: account.token, offset: '0'});
-    if (mailbox !== account || changing) return;
-    if (result.email !== account.address) throw Object.assign(new Error('Session expired'), {expired: true});
-    if (result.sid_token && result.sid_token !== account.token) {
-      account.token = result.sid_token;
-      save(account);
+    const result = await api('inbox', account.token);
+    if (mailbox !== account) return;
+    if (result.expired) throw Object.assign(new Error('Session expired'), {expired: true});
+    if (!Array.isArray(result.emails)) throw new Error('Invalid inbox response');
+    if (result.emails.length) {
+      account.messages = [...result.emails.reverse(), ...account.messages];
+      try { sessionStorage.setItem(key, JSON.stringify(account)); } catch {}
     }
-    const messages = result.list;
+    if (changing) return;
+    const messages = account.messages;
     const focused = document.activeElement?.dataset.messageId;
     if (!messages.length) empty('Your inbox is empty', 'Waiting for incoming mail.');
     else {
-      byId('count').textContent = result.count ?? messages.length;
-      byId('messages').replaceChildren(...messages.map(message => {
+      byId('count').textContent = messages.length;
+      byId('messages').replaceChildren(...messages.map((message, index) => {
         const row = document.createElement('button');
         row.className = 'message';
-        row.dataset.messageId = message.mail_id;
+        row.dataset.messageId = String(messages.length - index);
         const summary = document.createElement('span');
-        summary.textContent = (message.mail_from || 'Unknown sender') + ' · ' + (plainText(message.mail_subject || '') || '(No subject)');
+        summary.textContent = (message.from || 'Unknown sender') + ' · ' + (message.subject || '(No subject)');
         const received = document.createElement('time');
-        const date = new Date(Number(message.mail_timestamp) * 1000);
+        const date = new Date(message.date);
         received.dateTime = date.toISOString();
         received.textContent = date.toLocaleString(undefined, {month:'short', day:'numeric', hour:'numeric', minute:'2-digit'});
         row.append(summary, received);
-        row.onclick = () => readMessage(account, message.mail_id);
+        row.onclick = () => readMessage(message);
         return row;
       }));
       if (focused) [...byId('messages').children].find(row => row.dataset.messageId === focused)?.focus({preventScroll: true});
