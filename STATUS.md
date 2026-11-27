@@ -28,3 +28,7 @@ The follow-up Gmail test matched the sender and subject. Both plain-text and HTM
 The signature-free Gmail test passed against TempMail.lol. Sender, subject, and body matched in both plain text and HTML. The next step is to integrate the provider into MailGuest and verify delivery through the deployed inbox.
 
 The private Worker rejected Fetch's `redirect: 'error'` setting. With supported manual redirect handling, the request reached TempMail.lol and returned HTTP 403. The reason for the provider rejection is unverified. Restored Guerrilla Mail and confirmed address creation in the browser.
+
+## November 26, 2026 redesign
+
+Applied the MailGuest logo, favicon, indigo controls, lavender surfaces, updated typography, responsive inbox, and matching legal pages. Verified local desktop and mobile widths and address copying. Private deployment succeeded. The live browser opened at the sign-in gate, so post-deployment mailbox testing requires an authenticated session. Guerrilla Mail remains the active provider. The existing provider delivery limitations remain open.
