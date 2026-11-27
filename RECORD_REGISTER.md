@@ -21,3 +21,4 @@ Add a dated entry for each change to the application, documentation, deployment,
 | 2026-11-14 | Replacement provider retest | Gmail delivery matched sender and subject. Both body formats were present and neither matched the expected test sentence. |
 | 2026-11-14 | Replacement delivery test | An independent Gmail message matched the expected sender, subject, and body in both plain text and HTML. |
 | 2026-11-14 | Hosted provider test | Fixed Worker redirect handling. TempMail.lol returned HTTP 403 from the hosted deployment. Restored Guerrilla Mail and verified address creation. |
+| 2026-11-26 | Website redesign | Applied MailGuest design tokens, logo and favicon, responsive address and inbox cards, and consistent legal pages. Verified local desktop and mobile fit and copying. Private deployment succeeded. |
