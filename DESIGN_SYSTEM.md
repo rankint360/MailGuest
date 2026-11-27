@@ -35,3 +35,55 @@ Use DM Sans for interface text and Space Mono for email addresses. Use a 40–64
 ## Assets
 
 Use favicon.svg or favicon.ico for browser tabs, apple-touch-icon.png for iOS, and icon-192.png and icon-512.png for web app metadata. Use social-avatar.png for profile imagery and social-card.png for link previews. The SVG logo and mark are editable source assets. Open brand-preview.html for a visual reference.
+
+## Color proportions and contrast
+
+Use lavender and white for the majority of each screen. Reserve violet for the primary action and navigation emphasis. Use lime sparingly for the arrival dot and small highlights.
+
+White text on violet, ink on white, muted ink on white, and ink on lime are the approved text combinations. Use the decorative border for card separation and the stronger #8B82A5 border for input boundaries. Use #226344 for success and #8A4B08 for warning messages. Include a written status with every state indicator.
+
+## Type scale
+
+| Role | Size | Weight | Line height |
+| --- | --- | --- | --- |
+| Hero | 48–80 px | 800 | 1.05 |
+| Section heading | 32–48 px | 700 | 1.15 |
+| Card heading | 22–26 px | 700 | 1.25 |
+| Body | 16 px | 400 | 1.6 |
+| Helper | 14 px | 400 | 1.5 |
+| Address | 14–18 px | 400 | 1.5 |
+
+Use DM Sans for the interface, with a system sans-serif fallback. Space Mono distinguishes addresses and expiry times. Keep prose within 65 characters per line where practical.
+
+## Interaction states
+
+Primary buttons use violet with white text, deep violet on hover, and a visible violet focus ring separated by a 3 px gap. Disabled controls retain their labels and use 55% opacity. Use a progress label while generating an address, and announce the outcome through a polite status region.
+
+Address fields remain selectable. Provide keyboard copying when clipboard permission fails. Confirm replacement or removal of an active mailbox. Keep the current address available after a recoverable network error and offer Refresh.
+
+Message rows wrap long subjects and sender addresses. Display a readable timestamp. Give the message dialog a heading, close button, keyboard dismissal, and focus restoration.
+
+## Motion
+
+Use 160 ms for button and focus transitions and 240 ms for component entrances. Keep decorative floating motion within 8 px over a 5-second cycle. Honor prefers-reduced-motion by removing decorative animation and using immediate scroll behavior. Preserve loading and error feedback as readable text.
+
+## Logo and icon delivery
+
+The mark is a white envelope within a violet rounded square, paired with a lime arrival dot. Preserve the proportions and clear space. Use the standalone mark at 24 px or larger. The included 16 px favicon is reserved for browser tabs.
+
+| Asset | Format and dimensions |
+| --- | --- |
+| Logo for light backgrounds | Transparent PNG, 930 × 192 and editable SVG |
+| Logo for dark backgrounds | Transparent PNG, 930 × 192 and editable SVG |
+| Standalone mark | Transparent PNG, 512 × 512 and editable SVG |
+| Browser favicon | PNG 16 and 32 px, ICO, SVG |
+| Apple touch icon | PNG, 180 × 180 |
+| App icons | PNG, 192 × 192 and 512 × 512 |
+| Social avatar | PNG, 512 × 512 |
+| Social link preview | PNG, 1200 × 630 |
+
+## Implementation scope
+
+This kit refines the established MailGuest identity. The palette, logo geometry, and icon family are retained for consistency with the platform. The expanded guidance and tokens are delivered as a separate kit for integration.
+
+The generated brand board illustrates the identity. Its social avatar dimension label is conceptual. The production social-avatar.png is 512 × 512. Lavender highlight #E9E5FF complements the #F7F6FF page canvas. Use the packaged SVG and PNG files for production assets.
