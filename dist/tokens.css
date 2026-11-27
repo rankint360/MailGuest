@@ -21,3 +21,17 @@
   --mg-space-12: 48px;
 }
 .mg-focus:focus-visible { outline: 3px solid var(--mg-brand); outline-offset: 3px; }
+
+:root {
+  --mg-input-border: #8b82a5;
+  --mg-success: #226344;
+  --mg-warning: #8a4b08;
+  --mg-duration-fast: 160ms;
+  --mg-duration-enter: 240ms;
+  --mg-target-size: 44px;
+  --mg-content-width: 1080px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mg-motion { animation: none; transition: none; }
+}
+:root { --mg-lavender-highlight: #e9e5ff; }
